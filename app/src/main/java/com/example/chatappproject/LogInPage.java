@@ -56,45 +56,43 @@ public class LogInPage extends AppCompatActivity {
                 String pass = passwordTxt.getText().toString();
 
 
-
-                if(email.isEmpty() && pass.isEmpty()){
+                if (email.isEmpty() && pass.isEmpty()) {
                     Toast.makeText(LogInPage.this, "Please enter both email and password", Toast.LENGTH_SHORT).show();
 
-                }else if(email.isEmpty()){
+                } else if (email.isEmpty()) {
                     Toast.makeText(LogInPage.this, "Please enter email", Toast.LENGTH_SHORT).show();
-                }
-                else if(pass.isEmpty()){
+                } else if (pass.isEmpty()) {
                     Toast.makeText(LogInPage.this, "Please enter password", Toast.LENGTH_SHORT).show();
-                }
-                else{
+                } else {
                     mProgress.setCanceledOnTouchOutside(false);
                     mProgress.setTitle("Logging into your account ");
                     mProgress.setMessage("Please wait while we check your credentials");
                     mProgress.show();
-                    login(email,pass);
+                    login(email, pass);
                 }
             }
         });
     }
 
     private void login(String email, String pass) {
-        mAuth.signInWithEmailAndPassword(email,pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     mProgress.dismiss();
                     Toast.makeText(LogInPage.this, "login successful", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "onComplete: login successful");
-                    Intent intent = new Intent(LogInPage.this,MainActivity.class);
+                    Intent intent = new Intent(LogInPage.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();
-                }else{
+                } else {
                     task.addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             mProgress.dismiss();
-                            Log.d(TAG, "onFailure: task failure "+e);
-                            Toast.makeText(LogInPage.this, "failure:"+e, Toast.LENGTH_LONG).show();
+                            Log.d(TAG, "onFailure: task failure " + e);
+                            Toast.makeText(LogInPage.this, "failure:" + e, Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -104,7 +102,7 @@ public class LogInPage extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.d(TAG, "onFailure: "+e);
+                Log.d(TAG, "onFailure: " + e);
             }
         });
     }

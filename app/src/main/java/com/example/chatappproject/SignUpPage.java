@@ -86,6 +86,7 @@ public class SignUpPage extends AppCompatActivity {
                             Log.d(TAG, "onComplete: SignUp successful");
 
                             Intent intent = new Intent(SignUpPage.this, MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
                             finish();
 

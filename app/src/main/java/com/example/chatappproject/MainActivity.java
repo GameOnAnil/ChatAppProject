@@ -3,6 +3,7 @@ package com.example.chatappproject;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,11 +12,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+    ViewPager mViewPager;
+    TabLayout mTabLayout;
+    private ViewPagerAdapter viewPagerAdapter;
 
     FirebaseAuth mAuth;
 
@@ -29,6 +34,13 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mAuth = FirebaseAuth.getInstance();
+
+        mViewPager = findViewById(R.id.main_viewPager);
+        mTabLayout =findViewById(R.id.tab_layout_main);
+
+        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(viewPagerAdapter);
+        mTabLayout.setupWithViewPager(mViewPager);
 
     }
 
