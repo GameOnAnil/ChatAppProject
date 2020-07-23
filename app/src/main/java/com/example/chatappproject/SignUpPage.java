@@ -4,9 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,6 +28,8 @@ public class SignUpPage extends AppCompatActivity {
     EditText passwordTxt;
     Button signUpBtn;
 
+    ProgressDialog mProgressDialog;
+
     FirebaseAuth mAuth;
 
     @Override
@@ -36,6 +40,7 @@ public class SignUpPage extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar_signup);
         toolbar.setTitle("Sign Up New Account");
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         userNameTxt = findViewById(R.id.signup_user_name);
         emailTxt = findViewById(R.id.signup_email);
@@ -44,6 +49,9 @@ public class SignUpPage extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        mProgressDialog = new ProgressDialog(this);
+
+
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -51,7 +59,15 @@ public class SignUpPage extends AppCompatActivity {
                 String email = emailTxt.getText().toString();
                 String pass = passwordTxt.getText().toString();
 
-                signUp(email, pass);
+                if(user.isEmpty() || email.isEmpty() || pass.isEmpty()){
+                    Toast.makeText(SignUpPage.this, "Please fill all the fields", Toast.LENGTH_SHORT).show();
+                }else{
+                    mProgressDialog.setTitle("Registering user");
+                    mProgressDialog.setMessage("Please wait while we create your account");
+                    mProgressDialog.setCanceledOnTouchOutside(false);
+                    mProgressDialog.show();
+                    signUp(email, pass);
+                }
 
             }
         });
@@ -65,6 +81,7 @@ public class SignUpPage extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            mProgressDialog.dismiss();
                             Toast.makeText(SignUpPage.this, "SignUp successful", Toast.LENGTH_SHORT).show();
                             Log.d(TAG, "onComplete: SignUp successful");
 
@@ -73,7 +90,15 @@ public class SignUpPage extends AppCompatActivity {
                             finish();
 
                         } else {
-                            Log.d(TAG, "onComplete: failure some error ");
+                            mProgressDialog.dismiss();
+                            task.addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.d(TAG, "onFailure: task failed"+e);
+                                    Toast.makeText(SignUpPage.this, "task failed:"+e, Toast.LENGTH_LONG).show();
+                                }
+                            });
+
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -82,5 +107,16 @@ public class SignUpPage extends AppCompatActivity {
                 Log.d(TAG, "onFailure: failed" + e);
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
