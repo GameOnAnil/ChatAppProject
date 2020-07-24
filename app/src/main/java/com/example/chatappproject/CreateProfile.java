@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 
@@ -134,6 +136,10 @@ public class CreateProfile extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Toast.makeText(CreateProfile.this, "data added", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(CreateProfile.this,MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
                     }
                 });
             }
@@ -161,16 +167,24 @@ public class CreateProfile extends AppCompatActivity {
                 String uid = mCurrentUser.getUid();
 
                 final Uri resultUri = result.getUri();
-                StorageReference filePath = mStorageRef.child("Profile picture").child(uid + ".jpg");
+                final StorageReference filePath = mStorageRef.child("Profile picture").child(uid + ".jpg");
                 filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                         if (task.isSuccessful()) {
-
-                            imageUrl = task.getResult().getStorage().getDownloadUrl().toString();
-
                             Toast.makeText(CreateProfile.this, "data added", Toast.LENGTH_SHORT).show();
-                            mImageView.setImageURI(resultUri);
+
+                            Log.d(TAG, "onComplete: resultUri"+resultUri);
+                            filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    Log.d(TAG, "onSuccess: uri: "+uri);
+                                    imageUrl = uri.toString();
+
+                                    Picasso.get().load(uri).into(mImageView);
+                                }
+                            });
+
                         } else {
                             task.addOnFailureListener(new OnFailureListener() {
                                 @Override
@@ -183,6 +197,8 @@ public class CreateProfile extends AppCompatActivity {
                         }
                     }
                 });
+//setting up imageUrl
+
 
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {

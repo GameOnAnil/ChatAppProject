@@ -23,14 +23,19 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -71,6 +76,7 @@ public class EditProfile extends AppCompatActivity {
         toolbar.setTitle("Edit profile");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mImageView = findViewById(R.id.profile_image_edit);
         mUserName = findViewById(R.id.userNameTextEdit);
@@ -138,13 +144,59 @@ public class EditProfile extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Toast.makeText(EditProfile.this, "data added", Toast.LENGTH_SHORT).show();
+
+                        finish();
                     }
                 });
             }
         });
+        
+        initDetail();
 
 
     }
+
+    public void  initDetail(){
+        Log.d(TAG, "initDetail: ");
+        myRef = database.getInstance().getReference().child("User").child(mCurrentUser.getUid());
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String name = snapshot.child("user name").getValue().toString();
+                String status = snapshot.child("status").getValue().toString();
+                String image =snapshot.child("image").getValue().toString();
+
+
+                mUserName.setText(name);
+                mUserStatus.setText(status);
+                Log.d(TAG, "onDataChange: image from db : "+image);
+                Picasso.get().load(image).into(mImageView);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+//        mStorageRef.child("Profile picture").child(mCurrentUser.getUid()+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//            @Override
+//            public void onSuccess(Uri uri) {
+//                Log.d(TAG, "onSuccess: uri:"+uri);
+//                // Got the download URL for 'users/me/profile.png'
+//                Picasso.get().load(uri).into(mImageView);
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception exception) {
+//                // Handle any errors
+//            }
+//        });
+
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -164,31 +216,39 @@ public class EditProfile extends AppCompatActivity {
 
                 String uid = mCurrentUser.getUid();
 
+
                 final Uri resultUri = result.getUri();
-                StorageReference filePath = mStorageRef.child("Profile picture").child(uid + ".jpg");
+                final StorageReference filePath = mStorageRef.child("Profile picture").child(uid + ".jpg");
                 filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                         if (task.isSuccessful()) {
+                            Toast.makeText(EditProfile.this, "data to storage added", Toast.LENGTH_SHORT).show();
 
+                            filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    Log.d(TAG, "onSuccess: uri: "+uri);
+                                    imageUrl = uri.toString();
 
-                            imageUrl = task.getResult().getStorage().getDownloadUrl().toString();
-
-
-                            Toast.makeText(EditProfile.this, "data added", Toast.LENGTH_SHORT).show();
-                            mImageView.setImageURI(resultUri);
+                                    Picasso.get().load(uri).into(mImageView);
+                                }
+                            });
                         } else {
                             task.addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
                                     Toast.makeText(EditProfile.this, "failed" + e, Toast.LENGTH_SHORT).show();
                                     Log.d(TAG, "onFailure: failed due to : " + e);
+
                                 }
                             });
 
                         }
                     }
                 });
+
+
 
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
