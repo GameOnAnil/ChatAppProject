@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CreateProfile"
+    android:background="@color/common_google_signin_btn_text_light_pressed">
+
+    <include layout="@layout/toolbar_layout" android:id="@+id/toolbar_edit_profile"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_image_edit"
+        android:layout_width="159dp"
+        android:layout_height="141dp"
+        android:layout_marginTop="52dp"
+        android:src="@drawable/ic_baseline_account_circle_24"
+        app:civ_border_color="#FFFFFF"
+        app:civ_border_width="2dp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_edit_profile" />
+
+    <TextView
+        android:id="@+id/userNameTextEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:text="User Name"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:textColor="#fff"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_image_edit" />
+
+    <TextView
+        android:id="@+id/userStatusEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="10dp"
+        android:text="Hi i am a new user here."
+        android:textSize="18sp"
+        android:textColor="#fff"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userNameTextEdit" />
+
+    <Button
+        android:id="@+id/changeImageBtnEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="104dp"
+        android:text="Change image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userStatusEdit" />
+
+    <Button
+        android:id="@+id/confirmChangesEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Confirm Changes"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/changeStatusEdit"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/changeStatusEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="160dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="163dp"
+        android:text="Change Status"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/changeImageBtnEdit" />
+</androidx.constraintlayout.widget.ConstraintLayout>

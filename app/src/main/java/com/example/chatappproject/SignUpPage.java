@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class SignUpPage extends AppCompatActivity {
     private static final String TAG = "SignUpPage";
@@ -66,7 +67,7 @@ public class SignUpPage extends AppCompatActivity {
                     mProgressDialog.setMessage("Please wait while we create your account");
                     mProgressDialog.setCanceledOnTouchOutside(false);
                     mProgressDialog.show();
-                    signUp(email, pass);
+                    signUp(user,email, pass);
                 }
 
             }
@@ -74,7 +75,7 @@ public class SignUpPage extends AppCompatActivity {
 
     }
 
-    private void signUp(String email, String pass) {
+    private void signUp(final String user, String email, String pass) {
         Log.d(TAG, "signUp: ");
         mAuth.createUserWithEmailAndPassword(email, pass)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -85,7 +86,11 @@ public class SignUpPage extends AppCompatActivity {
                             Toast.makeText(SignUpPage.this, "SignUp successful", Toast.LENGTH_SHORT).show();
                             Log.d(TAG, "onComplete: SignUp successful");
 
-                            Intent intent = new Intent(SignUpPage.this, MainActivity.class);
+                            String uid = mAuth.getUid();
+
+                            Intent intent = new Intent(SignUpPage.this, CreateProfile.class);
+                            intent.putExtra("uid",uid);
+                            intent.putExtra("user name",user);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
                             finish();

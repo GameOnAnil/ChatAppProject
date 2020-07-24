@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = findViewById(R.id.main_viewPager);
         mTabLayout =findViewById(R.id.tab_layout_main);
 
+
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(viewPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
@@ -72,6 +73,10 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(MainActivity.this,ChoiceActivity.class);
                 startActivity(intent);
+                return true;
+            case R.id.item_edit_profile:
+                Intent intent1 = new Intent(MainActivity.this,EditProfile.class);
+                startActivity(intent1);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
