@@ -36,12 +36,14 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.iceteck.silicompressorr.SiliCompressor;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.w3c.dom.Text;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -226,10 +228,13 @@ public class EditProfile extends AppCompatActivity {
 
                 String uid = mCurrentUser.getUid();
 
+//
+//                final Uri resultUri = result.getUri();
+                File file = new File(SiliCompressor.with(this).compress(result.getUri().getPath(),new File(this.getCacheDir(),"temp")));
+                final Uri newUri = Uri.fromFile(file);
 
-                final Uri resultUri = result.getUri();
                 final StorageReference filePath = mStorageRef.child("Profile picture").child(uid + ".jpg");
-                filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                filePath.putFile(newUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                         if (task.isSuccessful()) {

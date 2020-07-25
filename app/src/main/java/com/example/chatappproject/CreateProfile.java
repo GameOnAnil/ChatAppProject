@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
@@ -31,10 +32,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.iceteck.silicompressorr.SiliCompressor;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -166,15 +170,23 @@ public class CreateProfile extends AppCompatActivity {
 
                 String uid = mCurrentUser.getUid();
 
-                final Uri resultUri = result.getUri();
+                //final Uri resultUri = result.getUri();
+
+                File file = new File(SiliCompressor.with(this).compress(result.getUri().getPath(),new File(this.getCacheDir(),"temp")));
+
+                final Uri newUri = Uri.fromFile(file);
+
+
                 final StorageReference filePath = mStorageRef.child("Profile picture").child(uid + ".jpg");
-                filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+
+
+                filePath.putFile(newUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(CreateProfile.this, "data added", Toast.LENGTH_SHORT).show();
 
-                            Log.d(TAG, "onComplete: resultUri"+resultUri);
+                            Log.d(TAG, "onComplete: resultUri"+newUri);
                             filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
@@ -197,9 +209,6 @@ public class CreateProfile extends AppCompatActivity {
                         }
                     }
                 });
-//setting up imageUrl
-
-
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();

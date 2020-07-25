@@ -1,5 +1,6 @@
 package com.example.chatappproject;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,12 +32,15 @@ public class AllUserAdapter extends FirebaseRecyclerAdapter<UserModel,AllUserAda
     }
 
 
+
     @Override
     protected void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull UserModel model) {
         holder.usernameTxt.setText(model.getUsername());
         holder.statusTxt.setText(model.getStatus());
         if(model.getImage()!=null){
             Picasso.get().load(model.getImage()).into(holder.circleImageView);
+        }else{
+            Picasso.get().load(R.drawable.profile).into(holder.circleImageView);
         }
 
     }
