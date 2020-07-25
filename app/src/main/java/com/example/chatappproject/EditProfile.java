@@ -1,6 +1,7 @@
 package com.example.chatappproject;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -47,24 +48,25 @@ import java.util.Random;
 
 public class EditProfile extends AppCompatActivity {
     private static final String TAG = "EditProfile";
-    ImageView mImageView;
-    TextView mUserName;
-    TextView mUserStatus;
-    Button changeImage;
-    Button changeStatus;
-    Button confirmChanges;
+    private ImageView mImageView;
+    private TextView mUserName;
+    private TextView mUserStatus;
+    private Button changeImage;
+    private Button changeStatus;
+    private Button confirmChanges;
 
-    FirebaseDatabase database;
-    DatabaseReference myRef;
+    private FirebaseDatabase database;
+    private DatabaseReference myRef;
 
-    FirebaseAuth mAuth;
-    FirebaseUser mCurrentUser;
+    private FirebaseAuth mAuth;
+    private FirebaseUser mCurrentUser;
 
-    String imageUrl;
+    private String imageUrl;
 
 
     private static final int GALLERY_PICK = 1;
     private StorageReference mStorageRef;
+    private ProgressDialog mProgressDialog;
 
 
     @Override
@@ -150,13 +152,13 @@ public class EditProfile extends AppCompatActivity {
                 });
             }
         });
-        
+
         initDetail();
 
 
     }
 
-    public void  initDetail(){
+    public void initDetail() {
         Log.d(TAG, "initDetail: ");
         myRef = database.getInstance().getReference().child("User").child(mCurrentUser.getUid());
 
@@ -165,13 +167,16 @@ public class EditProfile extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String name = snapshot.child("user name").getValue().toString();
                 String status = snapshot.child("status").getValue().toString();
-                String image =snapshot.child("image").getValue().toString();
+                if(snapshot.child("image").getValue()!=null){
+                    String image = snapshot.child("image").getValue().toString();
+                    Log.d(TAG, "onDataChange: image from db : " + image);
+                    Picasso.get().load(image).into(mImageView);
 
+                }
 
                 mUserName.setText(name);
                 mUserStatus.setText(status);
-                Log.d(TAG, "onDataChange: image from db : "+image);
-                Picasso.get().load(image).into(mImageView);
+
 
             }
 
@@ -213,6 +218,11 @@ public class EditProfile extends AppCompatActivity {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
+                mProgressDialog = new ProgressDialog(this);
+                mProgressDialog.setTitle("Uploading image");
+                mProgressDialog.setMessage("Please wait while the image is being uploaded.");
+                mProgressDialog.setCanceledOnTouchOutside(false);
+                mProgressDialog.show();
 
                 String uid = mCurrentUser.getUid();
 
@@ -228,10 +238,11 @@ public class EditProfile extends AppCompatActivity {
                             filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
-                                    Log.d(TAG, "onSuccess: uri: "+uri);
+                                    Log.d(TAG, "onSuccess: uri: " + uri);
                                     imageUrl = uri.toString();
 
                                     Picasso.get().load(uri).into(mImageView);
+                                    mProgressDialog.dismiss();
                                 }
                             });
                         } else {
@@ -240,6 +251,7 @@ public class EditProfile extends AppCompatActivity {
                                 public void onFailure(@NonNull Exception e) {
                                     Toast.makeText(EditProfile.this, "failed" + e, Toast.LENGTH_SHORT).show();
                                     Log.d(TAG, "onFailure: failed due to : " + e);
+                                    mProgressDialog.dismiss();
 
                                 }
                             });
@@ -247,8 +259,6 @@ public class EditProfile extends AppCompatActivity {
                         }
                     }
                 });
-
-
 
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
