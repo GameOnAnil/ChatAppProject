@@ -137,7 +137,7 @@ public class EditProfile extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Map<String, Object> user = new HashMap<>();
-                user.put("user name", mUserName.getText().toString());
+                user.put("username", mUserName.getText().toString());
                 user.put("status", mUserStatus.getText().toString());
                 user.put("image", imageUrl);
 
@@ -165,7 +165,7 @@ public class EditProfile extends AppCompatActivity {
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String name = snapshot.child("user name").getValue().toString();
+                String name = snapshot.child("username").getValue().toString();
                 String status = snapshot.child("status").getValue().toString();
                 if(snapshot.child("image").getValue()!=null){
                     String image = snapshot.child("image").getValue().toString();

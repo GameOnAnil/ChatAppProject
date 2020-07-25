@@ -127,7 +127,7 @@ public class CreateProfile extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Map<String,Object> user = new  HashMap<>();
-                user.put("user name",mUserName.getText().toString());
+                user.put("username",mUserName.getText().toString());
                 user.put("status",mUserStatus.getText().toString());
                 user.put("image",imageUrl);
 

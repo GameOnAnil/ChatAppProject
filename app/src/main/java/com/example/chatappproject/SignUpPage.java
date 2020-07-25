@@ -19,6 +19,9 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 
 public class SignUpPage extends AppCompatActivity {
@@ -60,14 +63,14 @@ public class SignUpPage extends AppCompatActivity {
                 String email = emailTxt.getText().toString();
                 String pass = passwordTxt.getText().toString();
 
-                if(user.isEmpty() || email.isEmpty() || pass.isEmpty()){
+                if (user.isEmpty() || email.isEmpty() || pass.isEmpty()) {
                     Toast.makeText(SignUpPage.this, "Please fill all the fields", Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
                     mProgressDialog.setTitle("Registering user");
                     mProgressDialog.setMessage("Please wait while we create your account");
                     mProgressDialog.setCanceledOnTouchOutside(false);
                     mProgressDialog.show();
-                    signUp(user,email, pass);
+                    signUp(user, email, pass);
                 }
 
             }
@@ -80,39 +83,44 @@ public class SignUpPage extends AppCompatActivity {
         mAuth.createUserWithEmailAndPassword(email, pass)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
+                    public void onComplete(@NonNull final Task<AuthResult> task) {
+
                         if (task.isSuccessful()) {
                             mProgressDialog.dismiss();
                             Toast.makeText(SignUpPage.this, "SignUp successful", Toast.LENGTH_SHORT).show();
                             Log.d(TAG, "onComplete: SignUp successful");
-
                             String uid = mAuth.getUid();
-
                             Intent intent = new Intent(SignUpPage.this, CreateProfile.class);
-                            intent.putExtra("uid",uid);
-                            intent.putExtra("user name",user);
+                            intent.putExtra("uid", uid);
+                            intent.putExtra("user name", user);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
                             finish();
 
+
                         } else {
                             mProgressDialog.dismiss();
-                            task.addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.d(TAG, "onFailure: task failed"+e);
-                                    Toast.makeText(SignUpPage.this, "task failed:"+e, Toast.LENGTH_LONG).show();
-                                }
-                            });
 
+                            try {
+                                throw task.getException();
+                            } catch (FirebaseAuthWeakPasswordException ei) {
+                                passwordTxt.setError(getString(R.string.error_weak_password));
+                                passwordTxt.requestFocus();
+                            } catch (FirebaseAuthInvalidCredentialsException ei) {
+                                emailTxt.setError(getString(R.string.error_invalid_email));
+                                emailTxt.requestFocus();
+                            } catch (FirebaseAuthUserCollisionException ei) {
+                                emailTxt.setError(getString(R.string.error_user_exists));
+                                emailTxt.requestFocus();
+                            } catch (Exception ei) {
+                                Log.e(TAG, ei.getMessage());
+                            }
                         }
+
+
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d(TAG, "onFailure: failed" + e);
-            }
-        });
+
+                });
     }
 
     @Override

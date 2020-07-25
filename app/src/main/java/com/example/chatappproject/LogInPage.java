@@ -19,6 +19,10 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 
 import java.lang.reflect.Field;
 
@@ -77,7 +81,7 @@ public class LogInPage extends AppCompatActivity {
     private void login(String email, String pass) {
         mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
+            public void onComplete(@NonNull final Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     mProgress.dismiss();
                     Toast.makeText(LogInPage.this, "login successful", Toast.LENGTH_SHORT).show();
@@ -91,8 +95,19 @@ public class LogInPage extends AppCompatActivity {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             mProgress.dismiss();
-                            Log.d(TAG, "onFailure: task failure " + e);
-                            Toast.makeText(LogInPage.this, "failure:" + e, Toast.LENGTH_LONG).show();
+                            try {
+                                throw task.getException();
+                            } catch (FirebaseAuthInvalidUserException ei) {
+                                passwordTxt.setError(getString(R.string.incorrect_email));
+                                passwordTxt.requestFocus();
+                            } catch (FirebaseAuthInvalidCredentialsException ei) {
+                                emailTxt.setError(getString(R.string.invalid_password));
+                                emailTxt.requestFocus();
+                            }
+                             catch (Exception ei) {
+                                Log.e(TAG, ei.getMessage());
+                            }
+
                         }
                     });
                 }
