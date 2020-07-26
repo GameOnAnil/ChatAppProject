@@ -3,4 +3,7 @@
     <color name="colorPrimary">@color/colorAccent</color>
     <color name="colorPrimaryDark">@color/colorAccent</color>
     <color name="colorAccent">#03DAC5</color>
+
+    <color name="darkBackground">#323131</color>
+    <color name="reddishOrange">#E12619</color>
 </resources>

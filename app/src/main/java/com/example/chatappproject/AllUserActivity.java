@@ -6,18 +6,23 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
 
-public class AllUserActivity extends AppCompatActivity {
+public class AllUserActivity extends AppCompatActivity implements AllUserAdapter.AdapterListener {
+    private static final String TAG = "AllUserActivity";
     Toolbar mToolbar;
     RecyclerView recyclerView;
     AllUserAdapter allUserAdapter;
@@ -51,7 +56,7 @@ public class AllUserActivity extends AppCompatActivity {
                         .setQuery(query, UserModel.class)
                         .build();
 
-        allUserAdapter = new AllUserAdapter(options);
+        allUserAdapter = new AllUserAdapter(options,this );
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(allUserAdapter);
 
@@ -81,6 +86,25 @@ public class AllUserActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+
+    }
+
+    @Override
+    public void onItemClicked(int position) {
+        String userId = allUserAdapter.getRef(position).getKey();
+
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        Log.d(TAG, "onItemClicked: currentUserId"+currentUserId);
+        Log.d(TAG, "ViewHolder: userId is: "+userId);
+        if(!userId.equals(currentUserId)){
+            Intent intent = new Intent(AllUserActivity.this,UserProfile.class);
+            intent.putExtra("userId",userId);
+            startActivity(intent);
+        }else{
+            Toast.makeText(this, "You are trying to send friend request to yourself idiot!!", Toast.LENGTH_SHORT).show();
+        }
+
 
     }
 }

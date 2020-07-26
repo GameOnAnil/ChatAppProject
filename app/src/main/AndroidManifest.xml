@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AllUserActivity"></activity>
+        <activity android:name=".UserProfile"></activity>
+        <activity android:name=".AllUserActivity" />
         <activity android:name=".EditProfile" />
         <activity android:name=".CreateProfile" />
         <activity android:name=".LogInPage" />

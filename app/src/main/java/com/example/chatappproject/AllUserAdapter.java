@@ -1,6 +1,8 @@
 package com.example.chatappproject;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +18,14 @@ import com.squareup.picasso.Picasso;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AllUserAdapter extends FirebaseRecyclerAdapter<UserModel,AllUserAdapter.ViewHolder> {
+    private static final String TAG = "AllUserAdapter";
 
-    public AllUserAdapter(@NonNull FirebaseRecyclerOptions options) {
+    AdapterListener adapterListener;
+
+    public AllUserAdapter(@NonNull FirebaseRecyclerOptions<UserModel> options,AdapterListener adapterListener) {
         super(options);
+        this.adapterListener = adapterListener;
     }
-
 
 
     @NonNull
@@ -55,6 +60,19 @@ public class AllUserAdapter extends FirebaseRecyclerAdapter<UserModel,AllUserAda
             usernameTxt = itemView.findViewById(R.id.userName_in_list);
             statusTxt = itemView.findViewById(R.id.status_in_list);
             circleImageView = itemView.findViewById(R.id.image_in_list);
+
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    adapterListener.onItemClicked(getAdapterPosition());
+
+                }
+            });
         }
+    }
+
+    public interface AdapterListener{
+         void onItemClicked(int position);
     }
 }
