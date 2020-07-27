@@ -5,10 +5,11 @@
     android:layout_height="match_parent"
     tools:context=".FriendsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="friend page" />
+
+  <androidx.recyclerview.widget.RecyclerView
+      android:id="@+id/friends_recycler_view"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      />
 
 </FrameLayout>

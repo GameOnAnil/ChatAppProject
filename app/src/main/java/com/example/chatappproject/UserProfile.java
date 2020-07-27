@@ -26,6 +26,8 @@ import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -141,11 +143,15 @@ public class UserProfile extends AppCompatActivity {
                 //----------FOR REQ_RECEIVED;-----------
                 if (mUser_state == "req_received") {
                     final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
+
+                    final Map<String,Object> map = new HashMap<>();
+                    map.put("date",currentDate);
+
                     mFriendsDatabase.child(mCurrentUser.getUid()).child(clickedUserId)
-                            .setValue(currentDate).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            .setValue(map).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            mFriendsDatabase.child(clickedUserId).child(mCurrentUser.getUid()).setValue(currentDate)
+                            mFriendsDatabase.child(clickedUserId).child(mCurrentUser.getUid()).setValue(map)
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
