@@ -21,8 +21,8 @@
         android:layout_height="150dp"
         android:layout_marginTop="60dp"
         android:src="@drawable/profile"
-        app:layout_constraintEnd_toEndOf="parent"
 
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_user_profile" />
@@ -54,19 +54,41 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/username_userprofile" />
 
-    <Button
-        android:id="@+id/friendRequest_btn"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="232dp"
-        android:background="@color/reddishOrange"
-        android:padding="5dp"
-        android:text="Send Friend Request"
-        android:textColor="#fff"
+        android:layout_marginTop="164dp"
+        android:gravity="center"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/status_userprofile"
-        app:layout_constraintVertical_bias="0.417" />
+        app:layout_constraintVertical_bias="0.642">
+
+        <Button
+            android:id="@+id/friendRequest_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:background="@color/reddishOrange"
+            android:padding="5dp"
+            android:text="Send Friend Request"
+            android:textColor="#fff" />
+
+        <Button
+            android:id="@+id/decline_friend_request"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:background="@color/reddishOrange"
+            android:padding="5dp"
+            android:text="Decline Friend Request"
+            android:textColor="#fff" />
+
+
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
