@@ -37,6 +37,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.iceteck.silicompressorr.SiliCompressor;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -163,16 +165,28 @@ public class EditProfile extends AppCompatActivity {
     public void initDetail() {
         Log.d(TAG, "initDetail: ");
         myRef = database.getInstance().getReference().child("User").child(mCurrentUser.getUid());
+        myRef.keepSynced(true);
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String name = snapshot.child("username").getValue().toString();
                 String status = snapshot.child("status").getValue().toString();
+
                 if(snapshot.child("image").getValue()!=null){
-                    String image = snapshot.child("image").getValue().toString();
+                    final String image = snapshot.child("image").getValue().toString();
                     Log.d(TAG, "onDataChange: image from db : " + image);
-                    Picasso.get().load(image).into(mImageView);
+                    Picasso.get().load(image).networkPolicy(NetworkPolicy.OFFLINE).into(mImageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Picasso.get().load(image).into(mImageView);
+                        }
+                    });
 
                 }
 
