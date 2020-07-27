@@ -6,4 +6,6 @@
 
     <color name="darkBackground">#323131</color>
     <color name="reddishOrange">#E12619</color>
+
+    <color name="onlineCircle">#9BDC4F</color>
 </resources>

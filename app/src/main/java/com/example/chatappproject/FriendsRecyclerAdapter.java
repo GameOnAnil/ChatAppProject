@@ -37,6 +37,7 @@ public class FriendsRecyclerAdapter extends FirebaseRecyclerAdapter<FriendsModel
     protected void onBindViewHolder(@NonNull final FriendViewHolder holder, int position, @NonNull FriendsModel model) {
 
         holder.dateTxt.setText(model.getDate());
+        holder.greenOnlineSymbol.setVisibility(View.GONE);
 
         String listUserId = getRef(position).getKey();
         Log.d(TAG, "onBindViewHolder: listUserId "+listUserId);
@@ -47,6 +48,15 @@ public class FriendsRecyclerAdapter extends FirebaseRecyclerAdapter<FriendsModel
                 if(snapshot.exists()){
                     String name = snapshot.child("username").getValue().toString();
                     String imageUri = snapshot.child("image").getValue().toString();
+                    Boolean online = Boolean.parseBoolean(snapshot.child("online").getValue().toString()) ;
+
+                        if (online.equals(true)){
+                            holder.greenOnlineSymbol.setVisibility(View.VISIBLE);
+                        }else{
+                            holder.greenOnlineSymbol.setVisibility(View.GONE);
+                        }
+
+
 
                     holder.usernameTxt.setText(name);
                     if(!imageUri.isEmpty()){
@@ -76,14 +86,15 @@ public class FriendsRecyclerAdapter extends FirebaseRecyclerAdapter<FriendsModel
 
     public class FriendViewHolder extends RecyclerView.ViewHolder {
         CircleImageView circleImageView;
+        CircleImageView greenOnlineSymbol;
         TextView usernameTxt;
-        TextView statusTxt;
         TextView dateTxt;
 
 
         public FriendViewHolder(@NonNull View itemView) {
             super(itemView);
             circleImageView = itemView.findViewById(R.id.image_in_friendlist);
+            greenOnlineSymbol = itemView.findViewById(R.id.greenCircle_in_frinedsList);
             usernameTxt = itemView.findViewById(R.id.userName_in_friendlist);
 
             dateTxt = itemView.findViewById(R.id.date_in_friendsList);
