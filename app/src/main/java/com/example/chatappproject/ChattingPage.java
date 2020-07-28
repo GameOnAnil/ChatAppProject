@@ -169,6 +169,7 @@ public class ChattingPage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 sendMessage();
+                mEditText.setText("");
             }
         });
 
@@ -212,6 +213,7 @@ public class ChattingPage extends AppCompatActivity {
             messageMap.put("seen",false);
             messageMap.put("type","text");
             messageMap.put("time",ServerValue.TIMESTAMP);
+            messageMap.put("from",mCurrentUser.getUid());
 
             Map messageUserMap = new HashMap();
             messageUserMap.put(current_user_ref+"/"+pushId,messageMap);
