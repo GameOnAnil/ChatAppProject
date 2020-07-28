@@ -19,6 +19,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         }else{
             mUserDatabase = FirebaseDatabase.getInstance().getReference().child("User").child(mCurrentUser.getUid());
             mUserDatabase.child("online").setValue(true);
+
         }
     }
 
@@ -80,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
         if(mCurrentUser !=null) {
             mUserDatabase = FirebaseDatabase.getInstance().getReference().child("User").child(mCurrentUser.getUid());
             mUserDatabase.child("online").setValue(false);
+            mUserDatabase.child("last seen").setValue(ServerValue.TIMESTAMP);
         }
     }
 
