@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,14 +21,17 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.network.ListNetworkRequest;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -44,6 +49,8 @@ public class ChattingPage extends AppCompatActivity {
     private TextView mLastSeen;
     private CircleImageView mActionBarProfileImage;
     private String mClickedUid;
+    private RecyclerView mRecyclerView;
+    private MessageAdapter messageAdapter;
 
     DatabaseReference mUserDatabase;
     FirebaseAuth mAuth;
@@ -167,6 +174,25 @@ public class ChattingPage extends AppCompatActivity {
 
 
 
+        mRecyclerView = findViewById(R.id.recycler_view_chattingPage);
+        Query query = FirebaseDatabase.getInstance()
+                .getReference()
+                .child("Messages")
+                .child(mCurrentUser.getUid()).child(mClickedUid)
+                .limitToLast(50);
+
+        FirebaseRecyclerOptions<MessagesModel> options =
+                new FirebaseRecyclerOptions.Builder<MessagesModel>()
+                        .setQuery(query, MessagesModel.class)
+                        .build();
+
+        messageAdapter = new MessageAdapter(options);
+
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(messageAdapter);
+
+
+
 
     }
 
@@ -211,6 +237,13 @@ public class ChattingPage extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart: chattingpage onstart called");
+        messageAdapter.startListening();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        messageAdapter.stopListening();
     }
 
     @Override
