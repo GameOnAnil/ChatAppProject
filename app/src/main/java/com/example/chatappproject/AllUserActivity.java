@@ -16,9 +16,11 @@ import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ServerValue;
 
 
 public class AllUserActivity extends AppCompatActivity implements AllUserAdapter.AdapterListener {
@@ -29,6 +31,9 @@ public class AllUserActivity extends AppCompatActivity implements AllUserAdapter
     DatabaseReference databaseReference;
     FirebaseDatabase mDb;
     Query query;
+    FirebaseAuth mAuth;
+    FirebaseUser mCurrentUser;
+    DatabaseReference mUserDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +47,9 @@ public class AllUserActivity extends AppCompatActivity implements AllUserAdapter
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        mAuth = FirebaseAuth.getInstance();
+        mCurrentUser = mAuth.getCurrentUser();
 
         recyclerView = findViewById(R.id.recycler_view);
         mDb = FirebaseDatabase.getInstance();
@@ -66,6 +74,8 @@ public class AllUserActivity extends AppCompatActivity implements AllUserAdapter
     @Override
     protected void onStart() {
         super.onStart();
+        Log.d(TAG, "onStart: called");
+
         allUserAdapter.startListening();
     }
 
@@ -107,4 +117,6 @@ public class AllUserActivity extends AppCompatActivity implements AllUserAdapter
 
 
     }
+
+
 }

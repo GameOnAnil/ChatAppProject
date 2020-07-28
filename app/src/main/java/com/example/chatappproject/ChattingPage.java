@@ -6,8 +6,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,10 +17,13 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
@@ -36,6 +41,7 @@ public class ChattingPage extends AppCompatActivity {
     private String mClickedUid;
 
     DatabaseReference mUserDatabase;
+    FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +56,7 @@ public class ChattingPage extends AppCompatActivity {
         actionBar.setDisplayShowCustomEnabled(true);
 
         LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View action_bar_view = layoutInflater.inflate(R.layout.custom_action_bar,null);
+        View action_bar_view = layoutInflater.inflate(R.layout.custom_action_bar, null);
 
         actionBar.setCustomView(action_bar_view);
 
@@ -63,33 +69,43 @@ public class ChattingPage extends AppCompatActivity {
         mBtn_send = findViewById(R.id.button_send);
         mBtn_add = findViewById(R.id.imageButton_add);
 
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser mCurrentUser = mAuth.getCurrentUser();
+        if(mCurrentUser !=null)
+        {
+            Log.d(TAG, "onCreate: ");
+            mUserDatabase = FirebaseDatabase.getInstance().getReference().child("User").child(mCurrentUser.getUid());
+            mUserDatabase.child("online").setValue(true);
+
+        }
+
         mUserDatabase = FirebaseDatabase.getInstance().getReference().child("User");
 
         //To add username to actionbar from receiver user
         mUserDatabase.child(mClickedUid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
+                if (snapshot.exists()) {
                     String Username = snapshot.child("username").getValue().toString();
                     String profileImage = snapshot.child("image").getValue().toString();
-                    Boolean online = Boolean.parseBoolean(snapshot.child("online").getValue().toString()) ;
+                    Boolean online = Boolean.parseBoolean(snapshot.child("online").getValue().toString());
                     String lastSeen = snapshot.child("last seen").getValue().toString();
                     mActionBarUserName.setText(Username);
 
-                    if(online==true){
+                    if (online == true) {
                         mLastSeen.setText("Online");
-                    }else{
+                    } else {
 
                         TimeAgo timeAgo = new TimeAgo();
                         long lastSeenTime = Long.parseLong(lastSeen);
-                        String lastSeenTimeText = timeAgo.getTimeAgo(lastSeenTime,getApplicationContext());
+                        String lastSeenTimeText = timeAgo.getTimeAgo(lastSeenTime, getApplicationContext());
 
                         mLastSeen.setText(lastSeenTimeText);
 
 
                     }
 
-                    if(!profileImage.isEmpty()){
+                    if (!profileImage.isEmpty()) {
                         Picasso.get().load(profileImage).into(mActionBarProfileImage);
                     }
 
@@ -97,21 +113,26 @@ public class ChattingPage extends AppCompatActivity {
 
             }
 
+
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
 
-        //To add our profile image to action bar profile image
-
-
 
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: chattingpage onstart called");
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId()==android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             finish();
 
         }

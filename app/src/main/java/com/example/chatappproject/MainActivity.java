@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mAuth = FirebaseAuth.getInstance();
+        mCurrentUser = mAuth.getCurrentUser();
 
         mViewPager = findViewById(R.id.main_viewPager);
         mTabLayout =findViewById(R.id.tab_layout_main);
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.setAdapter(viewPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
 
-         mCurrentUser = mAuth.getCurrentUser();
+
 
 
 
@@ -76,15 +77,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if(mCurrentUser !=null) {
-            mUserDatabase = FirebaseDatabase.getInstance().getReference().child("User").child(mCurrentUser.getUid());
-            mUserDatabase.child("online").setValue(false);
-            mUserDatabase.child("last seen").setValue(ServerValue.TIMESTAMP);
-        }
-    }
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        Log.d(TAG, "onStop: called");
+//        if(mCurrentUser !=null) {
+//            mUserDatabase = FirebaseDatabase.getInstance().getReference().child("User").child(mCurrentUser.getUid());
+//            mUserDatabase.child("online").setValue(false);
+//            mUserDatabase.child("last seen").setValue(ServerValue.TIMESTAMP);
+//        }
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -98,6 +100,12 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.item_logout:
                 FirebaseAuth.getInstance().signOut();
+                if(mCurrentUser !=null) {
+                    mUserDatabase = FirebaseDatabase.getInstance().getReference().child("User").child(mCurrentUser.getUid());
+                    mUserDatabase.child("online").setValue(false);
+                    mUserDatabase.child("last seen").setValue(ServerValue.TIMESTAMP);
+                }
+
                 Intent intent = new Intent(MainActivity.this,ChoiceActivity.class);
                 startActivity(intent);
                 return true;
@@ -108,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.item_all_users:
                 Intent intent2 = new Intent(MainActivity.this,AllUserActivity.class);
                 startActivity(intent2);
+                onStop();
                 return  true;
             default:
                 return super.onOptionsItemSelected(item);

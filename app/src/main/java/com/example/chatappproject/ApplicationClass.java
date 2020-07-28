@@ -32,7 +32,7 @@ public class ApplicationClass extends Application {
 
         mAuth = FirebaseAuth.getInstance();
         mCurrentUser = mAuth.getCurrentUser();
-        if(mCurrentUser!=null){
+        if (mCurrentUser != null) {
             mUserDatabase = FirebaseDatabase.getInstance().getReference().child("User").child(mCurrentUser.getUid());
 
             setOnline();
@@ -42,28 +42,21 @@ public class ApplicationClass extends Application {
     }
 
 
-
     private void setOnline() {
-        Map<String , Object> map = new HashMap<>();
-        map.put("online",true);
+        mUserDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    mUserDatabase.child("online").onDisconnect().setValue(false);
+                    mUserDatabase.child("last seen").onDisconnect().setValue(ServerValue.TIMESTAMP);
+                }
+            }
 
-     mUserDatabase.addValueEventListener(new ValueEventListener() {
-         @Override
-         public void onDataChange(@NonNull DataSnapshot snapshot) {
-             if(snapshot.exists()){
-                 mUserDatabase.child("online").onDisconnect().setValue(false);
-                 mUserDatabase.child("last seen").onDisconnect().setValue(ServerValue.TIMESTAMP);
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
-
-
-             }
-         }
-
-         @Override
-         public void onCancelled(@NonNull DatabaseError error) {
-
-         }
-     });
+            }
+        });
     }
 
 
