@@ -1,6 +1,7 @@
 package com.example.chatappproject;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,6 +28,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -42,6 +47,8 @@ public class ChattingPage extends AppCompatActivity {
 
     DatabaseReference mUserDatabase;
     FirebaseAuth mAuth;
+    FirebaseUser mCurrentUser;
+    FirebaseDatabase mRootRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +77,7 @@ public class ChattingPage extends AppCompatActivity {
         mBtn_add = findViewById(R.id.imageButton_add);
 
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser mCurrentUser = mAuth.getCurrentUser();
+        mCurrentUser = mAuth.getCurrentUser();
         if(mCurrentUser !=null)
         {
             Log.d(TAG, "onCreate: ");
@@ -79,6 +86,7 @@ public class ChattingPage extends AppCompatActivity {
 
         }
 
+        mRootRef = FirebaseDatabase.getInstance();
         mUserDatabase = FirebaseDatabase.getInstance().getReference().child("User");
 
         //To add username to actionbar from receiver user
@@ -99,12 +107,8 @@ public class ChattingPage extends AppCompatActivity {
                         TimeAgo timeAgo = new TimeAgo();
                         long lastSeenTime = Long.parseLong(lastSeen);
                         String lastSeenTimeText = timeAgo.getTimeAgo(lastSeenTime, getApplicationContext());
-
                         mLastSeen.setText(lastSeenTimeText);
-
-
                     }
-
                     if (!profileImage.isEmpty()) {
                         Picasso.get().load(profileImage).into(mActionBarProfileImage);
                     }
@@ -112,9 +116,6 @@ public class ChattingPage extends AppCompatActivity {
                 }
 
             }
-
-
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
@@ -122,6 +123,88 @@ public class ChattingPage extends AppCompatActivity {
         });
 
 
+        //adding chat root
+        mRootRef.getReference().child("Chat").child(mCurrentUser.getUid())
+                .addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(!snapshot.hasChild(mClickedUid)){
+//Actual value to be updated
+                    Map chatAppMap = new HashMap();
+                    chatAppMap.put("seen",false);
+                    chatAppMap.put("timestamp",ServerValue.TIMESTAMP);
+//To make location easy: similar to .getReference().child("Chat").child(outUid).child(clickedUid)
+// .updateChildren(map);
+                    Map chatUserMap = new HashMap();
+                    chatUserMap.put("Chat/"+mCurrentUser.getUid()+"/"+mClickedUid,chatAppMap);
+                    chatUserMap.put("Chat/"+mClickedUid+"/"+mCurrentUser.getUid(),chatAppMap);
+
+                    mRootRef.getReference().updateChildren(chatUserMap, new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                            if(error!=null){
+                                Log.d(TAG, "onComplete: error: "+error);
+
+                            }
+                        }
+                    });
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        mBtn_send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendMessage();
+            }
+        });
+
+
+
+
+    }
+
+    private void sendMessage() {
+        String enteredMessage = mEditText.getText().toString();
+
+        if(!enteredMessage.isEmpty()){
+            String current_user_ref = "Messages/"+mCurrentUser.getUid()+"/"+mClickedUid;
+            String clicked_user_ref = "Messages/"+mClickedUid+"/"+mCurrentUser.getUid();
+
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
+                    .child("Messages").push();
+            String pushId = databaseReference.getKey();
+
+            Map messageMap = new HashMap();
+            messageMap.put("message",enteredMessage);
+            messageMap.put("seen",false);
+            messageMap.put("type","text");
+            messageMap.put("time",ServerValue.TIMESTAMP);
+
+            Map messageUserMap = new HashMap();
+            messageUserMap.put(current_user_ref+"/"+pushId,messageMap);
+            messageUserMap.put(clicked_user_ref+"/"+pushId,messageMap);
+
+            mRootRef.getReference().updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                    if(error !=null){
+                        Log.d(TAG, "onComplete: error: "+error);
+
+                    }
+                }
+            });
+
+
+        }else{
+            Toast.makeText(this, "Enter message first", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
