@@ -5,8 +5,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.firebase.ui.database.paging.DatabasePagingOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -51,12 +54,17 @@ public class ChattingPage extends AppCompatActivity {
     private String mClickedUid;
     private RecyclerView mRecyclerView;
     private MessageAdapter messageAdapter;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
+    private static int TOTAL_ITEM_LOAD ;
+    private int page_number = 0;
 
     DatabaseReference mUserDatabase;
     FirebaseAuth mAuth;
     FirebaseUser mCurrentUser;
     FirebaseDatabase mRootRef;
     LinearLayoutManager mLinearLayoutManager;
+
 
 
     @Override
@@ -175,14 +183,42 @@ public class ChattingPage extends AppCompatActivity {
             }
         });
 
+//-------------SETUP RECYCLER VIEW----------
+        TOTAL_ITEM_LOAD = 10;
+        LoadMessageToRecycler();
 
 
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                messageAdapter.stopListening();
+                mRecyclerView.clearOnScrollListeners();
+
+                TOTAL_ITEM_LOAD+=5;
+                LoadMessageToRecycler();
+                messageAdapter.startListening();
+
+                mSwipeRefreshLayout.setRefreshing(false);
+
+            }
+        });
+
+
+
+    }
+
+
+    public void LoadMessageToRecycler(){
         mRecyclerView = findViewById(R.id.recycler_view_chattingPage);
+        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
+
+
         Query query = FirebaseDatabase.getInstance()
                 .getReference()
                 .child("Messages")
                 .child(mCurrentUser.getUid()).child(mClickedUid)
-                .limitToLast(50);
+                .limitToLast(TOTAL_ITEM_LOAD);
 
         FirebaseRecyclerOptions<MessagesModel> options =
                 new FirebaseRecyclerOptions.Builder<MessagesModel>()
@@ -212,17 +248,11 @@ public class ChattingPage extends AppCompatActivity {
                 }
             }
         });
-
         mRecyclerView.hasFixedSize();
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
         mRecyclerView.setAdapter(messageAdapter);
-
-
-
-
-
-
     }
+
 
     private void sendMessage() {
         String enteredMessage = mEditText.getText().toString();

@@ -12,13 +12,22 @@
 
          />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_chattingPage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="50dp"
         android:layout_below="@+id/toolbar_chatting_page"
-       />
+        >
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_chattingPage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
 
     <LinearLayout
         android:id="@+id/linearLayout"

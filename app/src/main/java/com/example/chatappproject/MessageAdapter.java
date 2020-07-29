@@ -141,12 +141,10 @@ public class MessageAdapter extends FirebaseRecyclerAdapter<MessagesModel, Recyc
         if (viewType == 1) {
             LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
             View v = layoutInflater.inflate(R.layout.chatting_page_list, parent, false);
-            Log.d(TAG, "onCreateViewHolder: viewType is 1");
             return new MessageViewHolder(v);
         } else {
             LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
             View v = layoutInflater.inflate(R.layout.chatting_page_list_second, parent, false);
-            Log.d(TAG, "onCreateViewHolder: viewType is 2");
             return new MessageViewHolderSecond(v);
         }
 
@@ -157,9 +155,6 @@ public class MessageAdapter extends FirebaseRecyclerAdapter<MessagesModel, Recyc
         String fromUid = getSnapshots().getSnapshot(position).child("from").getValue().toString();
 
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        Log.d(TAG, "getItemViewType: fromUid " + fromUid);
-        Log.d(TAG, "getItemViewType: currentUid in getItemViewTYpe " + currentUserId);
 
         if (currentUserId.equals(fromUid)) {
             return TYPE_SENDER;
