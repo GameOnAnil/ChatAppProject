@@ -56,7 +56,7 @@ public class ChattingPage extends AppCompatActivity {
     private MessageAdapter messageAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private static int TOTAL_ITEM_LOAD ;
+    private static int TOTAL_ITEM_LOAD;
     private int page_number = 0;
 
     DatabaseReference mUserDatabase;
@@ -64,7 +64,6 @@ public class ChattingPage extends AppCompatActivity {
     FirebaseUser mCurrentUser;
     FirebaseDatabase mRootRef;
     LinearLayoutManager mLinearLayoutManager;
-
 
 
     @Override
@@ -95,8 +94,7 @@ public class ChattingPage extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         mCurrentUser = mAuth.getCurrentUser();
-        if(mCurrentUser !=null)
-        {
+        if (mCurrentUser != null) {
             Log.d(TAG, "onCreate: ");
             mUserDatabase = FirebaseDatabase.getInstance().getReference().child("User").child(mCurrentUser.getUid());
             mUserDatabase.child("online").setValue(true);
@@ -133,6 +131,7 @@ public class ChattingPage extends AppCompatActivity {
                 }
 
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
@@ -143,37 +142,37 @@ public class ChattingPage extends AppCompatActivity {
         //adding chat root
         mRootRef.getReference().child("Chat").child(mCurrentUser.getUid())
                 .addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(!snapshot.hasChild(mClickedUid)){
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (!snapshot.hasChild(mClickedUid)) {
 //Actual value to be updated
-                    Map chatAppMap = new HashMap();
-                    chatAppMap.put("seen",false);
-                    chatAppMap.put("timestamp",ServerValue.TIMESTAMP);
+                            Map chatAppMap = new HashMap();
+                            chatAppMap.put("seen", false);
+                            chatAppMap.put("timestamp", ServerValue.TIMESTAMP);
 //To make location easy: similar to .getReference().child("Chat").child(outUid).child(clickedUid)
 // .updateChildren(map);
-                    Map chatUserMap = new HashMap();
-                    chatUserMap.put("Chat/"+mCurrentUser.getUid()+"/"+mClickedUid,chatAppMap);
-                    chatUserMap.put("Chat/"+mClickedUid+"/"+mCurrentUser.getUid(),chatAppMap);
+                            Map chatUserMap = new HashMap();
+                            chatUserMap.put("Chat/" + mCurrentUser.getUid() + "/" + mClickedUid, chatAppMap);
+                            chatUserMap.put("Chat/" + mClickedUid + "/" + mCurrentUser.getUid(), chatAppMap);
 
-                    mRootRef.getReference().updateChildren(chatUserMap, new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                            if(error!=null){
-                                Log.d(TAG, "onComplete: error: "+error);
+                            mRootRef.getReference().updateChildren(chatUserMap, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                                    if (error != null) {
+                                        Log.d(TAG, "onComplete: error: " + error);
 
-                            }
+                                    }
+                                }
+                            });
                         }
-                    });
-                }
 
-            }
+                    }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
-            }
-        });
+                    }
+                });
 
         mBtn_send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,7 +194,7 @@ public class ChattingPage extends AppCompatActivity {
                 messageAdapter.stopListening();
                 mRecyclerView.clearOnScrollListeners();
 
-                TOTAL_ITEM_LOAD+=5;
+                TOTAL_ITEM_LOAD += 5;
                 LoadMessageToRecycler();
                 messageAdapter.startListening();
 
@@ -205,11 +204,10 @@ public class ChattingPage extends AppCompatActivity {
         });
 
 
-
     }
 
 
-    public void LoadMessageToRecycler(){
+    public void LoadMessageToRecycler() {
         mRecyclerView = findViewById(R.id.recycler_view_chattingPage);
         mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
 
@@ -243,7 +241,7 @@ public class ChattingPage extends AppCompatActivity {
 //                    mRecyclerView.scrollToPosition(positionStart);
 //                }
 
-                if (lastVisiblePosition == -1 || positionStart >= (friendlyMessageCount - 1)){
+                if (lastVisiblePosition == -1 || positionStart >= (friendlyMessageCount - 1)) {
                     mRecyclerView.scrollToPosition(positionStart);
                 }
             }
@@ -257,37 +255,37 @@ public class ChattingPage extends AppCompatActivity {
     private void sendMessage() {
         String enteredMessage = mEditText.getText().toString();
 
-        if(!enteredMessage.isEmpty()){
-            String current_user_ref = "Messages/"+mCurrentUser.getUid()+"/"+mClickedUid;
-            String clicked_user_ref = "Messages/"+mClickedUid+"/"+mCurrentUser.getUid();
+        if (!enteredMessage.isEmpty()) {
+            String current_user_ref = "Messages/" + mCurrentUser.getUid() + "/" + mClickedUid;
+            String clicked_user_ref = "Messages/" + mClickedUid + "/" + mCurrentUser.getUid();
 
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
                     .child("Messages").push();
             String pushId = databaseReference.getKey();
 
             Map messageMap = new HashMap();
-            messageMap.put("message",enteredMessage);
-            messageMap.put("seen",false);
-            messageMap.put("type","text");
-            messageMap.put("time",ServerValue.TIMESTAMP);
-            messageMap.put("from",mCurrentUser.getUid());
+            messageMap.put("message", enteredMessage);
+            messageMap.put("seen", false);
+            messageMap.put("type", "text");
+            messageMap.put("time", ServerValue.TIMESTAMP);
+            messageMap.put("from", mCurrentUser.getUid());
 
             Map messageUserMap = new HashMap();
-            messageUserMap.put(current_user_ref+"/"+pushId,messageMap);
-            messageUserMap.put(clicked_user_ref+"/"+pushId,messageMap);
+            messageUserMap.put(current_user_ref + "/" + pushId, messageMap);
+            messageUserMap.put(clicked_user_ref + "/" + pushId, messageMap);
 
             mRootRef.getReference().updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                    if(error !=null){
-                        Log.d(TAG, "onComplete: error: "+error);
+                    if (error != null) {
+                        Log.d(TAG, "onComplete: error: " + error);
 
                     }
                 }
             });
 
 
-        }else{
+        } else {
             Toast.makeText(this, "Enter message first", Toast.LENGTH_SHORT).show();
         }
     }
@@ -295,7 +293,6 @@ public class ChattingPage extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart: chattingpage onstart called");
         messageAdapter.startListening();
     }
 

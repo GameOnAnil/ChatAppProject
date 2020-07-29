@@ -92,7 +92,11 @@ public class FriendsFragment extends Fragment implements FriendsRecyclerAdapter.
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (i == 0) {
-                    Toast.makeText(getContext(), "View Profile", Toast.LENGTH_SHORT).show();
+
+                    String userId = adapter.getRef(position).getKey();
+                    Intent intent = new Intent(getContext(),UserProfile.class);
+                    intent.putExtra("userId",userId);
+                    startActivity(intent);
 
                 } else if (i == 1) {
                     String clickedUid = adapter.getRef(position).getKey();

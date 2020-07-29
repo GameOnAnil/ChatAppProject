@@ -21,6 +21,9 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
                 FriendsFragment friendsFragment = new FriendsFragment();
                 return  friendsFragment;
             case 2:
+                AllUserFragment allUserFragment = new AllUserFragment();
+                return  allUserFragment;
+            case 3:
                 RequestFragment requestFragment = new RequestFragment();
                 return  requestFragment;
             default:
@@ -41,6 +44,8 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 return "Friends";
             case 2:
+                return "Users";
+            case 3:
                 return "Requests";
             default:
                 return null;
