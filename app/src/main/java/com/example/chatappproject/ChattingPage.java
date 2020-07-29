@@ -56,6 +56,8 @@ public class ChattingPage extends AppCompatActivity {
     FirebaseAuth mAuth;
     FirebaseUser mCurrentUser;
     FirebaseDatabase mRootRef;
+    LinearLayoutManager mLinearLayoutManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,9 +190,34 @@ public class ChattingPage extends AppCompatActivity {
                         .build();
 
         messageAdapter = new MessageAdapter(options);
+        mLinearLayoutManager = new LinearLayoutManager(this);
 
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        messageAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                int friendlyMessageCount = messageAdapter.getItemCount();
+                int lastVisiblePosition =
+                        mLinearLayoutManager.findLastCompletelyVisibleItemPosition();
+                // If the recycler view is initially being loaded or the
+                // user is at the bottom of the list, scroll to the bottom
+                // of the list to show the newly added message.
+//                if (lastVisiblePosition == -1 ||(positionStart >= (friendlyMessageCount - 1) &&
+//                                lastVisiblePosition == (positionStart - 1))) {
+//                    mRecyclerView.scrollToPosition(positionStart);
+//                }
+
+                if (lastVisiblePosition == -1 || positionStart >= (friendlyMessageCount - 1)){
+                    mRecyclerView.scrollToPosition(positionStart);
+                }
+            }
+        });
+
+        mRecyclerView.hasFixedSize();
+        mRecyclerView.setLayoutManager(mLinearLayoutManager);
         mRecyclerView.setAdapter(messageAdapter);
+
+
 
 
 
