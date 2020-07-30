@@ -106,7 +106,7 @@
             android:text="Sign Up"
             android:textColor="#fff"
 
-            android:background="@drawable/login_btn_round_bg"/>
+            android:background="@drawable/round_btn_color_primary"/>
 
     </LinearLayout>
 

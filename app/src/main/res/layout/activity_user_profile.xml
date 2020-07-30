@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".UserProfile"
-    android:background="@color/darkBackground">
+   >
 
 
     <include
@@ -15,17 +15,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/image_user_profile"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="60dp"
-        android:src="@drawable/profile"
+    <RelativeLayout
+        android:id="@+id/container_user_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_user_profile"
+        android:gravity="center"
+        android:background="@color/colorPrimary"
 
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_user_profile" />
+        >
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/image_user_profile"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="30dp"
+            android:src="@drawable/profile"
+
+
+           />
+
+    </RelativeLayout>
+
+
 
     <TextView
         android:id="@+id/username_userprofile"
@@ -34,11 +46,11 @@
         android:layout_marginTop="15dp"
         android:text="TextView"
         android:textAlignment="center"
-        android:textColor="#fff"
+        android:textColor="#000"
         android:textSize="35sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_user_profile" />
+        app:layout_constraintTop_toBottomOf="@+id/container_user_profile" />
 
     <TextView
         android:id="@+id/status_userprofile"
@@ -48,7 +60,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="8dp"
         android:text="TextView"
-        android:textColor="#fff"
+        android:textColor="#000"
         android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -72,7 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
-            android:background="@color/reddishOrange"
+            android:background="@drawable/round_btn_color_primary"
             android:padding="5dp"
             android:text="Send Friend Request"
             android:textColor="#fff" />
@@ -82,7 +94,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:background="@color/reddishOrange"
+            android:background="@drawable/round_btn_red"
             android:padding="5dp"
             android:text="Decline Friend Request"
             android:textColor="#fff" />

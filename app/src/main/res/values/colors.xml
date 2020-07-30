@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#EA9923</color>
-    <color name="colorPrimaryDark">#BD7C1C</color>
-    <color name="colorAccent">#F3A93E</color>
+    <color name="colorPrimary">#8E68D1</color>
+    <color name="colorPrimaryDark">@color/colorPrimary</color>
+    <color name="colorAccent">@color/colorPrimary</color>
 
     <color name="darkBackground">#323131</color>
     <color name="darkLighterBackground">#434242</color>
     <color name="reddishOrange">#E12619</color>
 
     <color name="onlineCircle">#9BDC4F</color>
-    <color name="textfieldBlue">#1B77BF</color>
+    <color name="textfieldBlue">#288EDD</color>
 
 </resources>
