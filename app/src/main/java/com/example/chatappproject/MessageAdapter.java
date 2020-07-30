@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -45,7 +46,22 @@ public class MessageAdapter extends FirebaseRecyclerAdapter<MessagesModel, Recyc
     protected void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position, @NonNull MessagesModel model) {
         if (holder.getItemViewType() == TYPE_SENDER) {
             final MessageViewHolder messageViewHolder = (MessageViewHolder) holder;
-            messageViewHolder.messageTxt.setText(model.getMessage());
+
+
+            String message_type = model.getType();
+            Log.d(TAG, "onBindViewHolder: message_type "+message_type);
+            if(message_type.equals("text")){
+                Log.d(TAG, "onBindViewHolder: if st is true ");
+                messageViewHolder.messageTxt.setVisibility(View.VISIBLE);
+                messageViewHolder.messageTxt.setText(model.getMessage());
+            }
+            else{
+                String messageImageUri = model.getMessage();
+                Picasso.get().load(messageImageUri).into(messageViewHolder.imageViewMessage);
+                messageViewHolder.messageTxt.setVisibility(View.GONE);
+            }
+
+
 
             mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
             String currentUserId = mCurrentUser.getUid();
@@ -61,6 +77,7 @@ public class MessageAdapter extends FirebaseRecyclerAdapter<MessagesModel, Recyc
                         String imageUri = snapshot.child("image").getValue().toString();
                         if (!imageUri.isEmpty()) {
                             Picasso.get().load(imageUri).into(messageViewHolder.profileImage);
+
                         }
 
                     }
@@ -78,7 +95,20 @@ public class MessageAdapter extends FirebaseRecyclerAdapter<MessagesModel, Recyc
             final MessageViewHolderSecond messageViewHolderSecond = (MessageViewHolderSecond) holder;
 
 
-            messageViewHolderSecond.messageTxtSecond.setText(model.getMessage());
+
+
+            String message_type = model.getType();
+            Log.d(TAG, "onBindViewHolder: message_type "+message_type);
+            if(message_type.equals("text")){
+                Log.d(TAG, "onBindViewHolder: if st is true ");
+                messageViewHolderSecond.messageTxtSecond.setVisibility(View.VISIBLE);
+                messageViewHolderSecond.messageTxtSecond.setText(model.getMessage());
+            }
+            else{
+                String messageImageUri = model.getMessage();
+                Picasso.get().load(messageImageUri).into(messageViewHolderSecond.imageViewMessageSecond);
+                messageViewHolderSecond.messageTxtSecond.setVisibility(View.GONE);
+            }
 
             mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
             String currentUserId = mCurrentUser.getUid();
@@ -113,22 +143,26 @@ public class MessageAdapter extends FirebaseRecyclerAdapter<MessagesModel, Recyc
     public class MessageViewHolder extends RecyclerView.ViewHolder {
         CircleImageView profileImage;
         TextView messageTxt;
+        ImageView imageViewMessage;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
             profileImage = itemView.findViewById(R.id.profile_ours);
             messageTxt = itemView.findViewById(R.id.message_textfield);
+            imageViewMessage = itemView.findViewById(R.id.message_images);
         }
     }
 
     public class MessageViewHolderSecond extends RecyclerView.ViewHolder {
         CircleImageView profileImageSecond;
         TextView messageTxtSecond;
+        ImageView imageViewMessageSecond;
 
         public MessageViewHolderSecond(@NonNull View itemView) {
             super(itemView);
             profileImageSecond = itemView.findViewById(R.id.profile_ours_second);
             messageTxtSecond = itemView.findViewById(R.id.message_textfield_second);
+            imageViewMessageSecond = itemView.findViewById(R.id.message_images_second);
         }
 
     }
