@@ -19,19 +19,27 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="240dp"
         android:text="Login existing account"
+        android:textColor="#fff"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_choice" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_choice"
+
+        android:background="@color/textfieldBlue"
+        android:padding="5dp"/>
 
     <Button
         android:id="@+id/btn_create_new"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Create new account"
+        android:textColor="#fff"
+        android:padding="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_login_exists"
-        app:layout_constraintVertical_bias="0.147" />
+        app:layout_constraintVertical_bias="0.147"
+
+        android:background="@color/reddishOrange"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

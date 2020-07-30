@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="8dp"
+
     app:cardCornerRadius="8dp"
     android:elevation="5dp"
     android:layout_marginStart="5dp"
@@ -15,8 +15,8 @@
         android:layout_height="match_parent">
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/image_in_friendlist"
-            android:layout_width="85dp"
-            android:layout_height="85dp"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
             android:src="@drawable/profile"
             android:layout_margin="10dp"
             />

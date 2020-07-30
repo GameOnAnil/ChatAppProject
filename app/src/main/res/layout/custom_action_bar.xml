@@ -6,7 +6,7 @@
     android:layout_height="?attr/actionBarSize"
     android:gravity="center_vertical"
     android:theme="@style/Theme.AppCompat"
-     android:background="@color/design_default_color_secondary_variant">
+     android:background="@color/colorPrimary">
 
     <TextView
         android:id="@+id/custombar_username"

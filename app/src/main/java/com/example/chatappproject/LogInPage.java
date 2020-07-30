@@ -17,6 +17,8 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
@@ -28,8 +30,11 @@ import java.lang.reflect.Field;
 
 public class LogInPage extends AppCompatActivity {
     private static final String TAG = "LogInPage";
-    EditText emailTxt;
-    EditText passwordTxt;
+    TextInputEditText emailTxt;
+    TextInputEditText passwordTxt;
+    TextInputLayout emailLayout;
+    TextInputLayout passwordLayout;
+
     Button loginBtn;
     FirebaseAuth mAuth;
     ProgressDialog mProgress;
@@ -50,6 +55,8 @@ public class LogInPage extends AppCompatActivity {
         emailTxt = findViewById(R.id.login_email);
         passwordTxt = findViewById(R.id.login_password);
         loginBtn = findViewById(R.id.login_btn);
+        emailLayout = findViewById(R.id.login_email_layout);
+        passwordLayout = findViewById(R.id.login_password_layout);
 
         mProgress = new ProgressDialog(this);
 
@@ -78,7 +85,7 @@ public class LogInPage extends AppCompatActivity {
         });
     }
 
-    private void login(String email, String pass) {
+    private void login(String email, final String pass) {
         mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull final Task<AuthResult> task) {
@@ -98,10 +105,10 @@ public class LogInPage extends AppCompatActivity {
                             try {
                                 throw task.getException();
                             } catch (FirebaseAuthInvalidUserException ei) {
-                                passwordTxt.setError(getString(R.string.incorrect_email));
+                                passwordLayout.setError(getString(R.string.incorrect_email));
                                 passwordTxt.requestFocus();
                             } catch (FirebaseAuthInvalidCredentialsException ei) {
-                                emailTxt.setError(getString(R.string.invalid_password));
+                                emailLayout.setError(getString(R.string.invalid_password));
                                 emailTxt.requestFocus();
                             }
                              catch (Exception ei) {

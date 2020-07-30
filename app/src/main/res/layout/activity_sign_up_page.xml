@@ -24,38 +24,78 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar_signup"
         app:layout_constraintVertical_bias="0.19999999">
 
-        <EditText
-            android:id="@+id/signup_user_name"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/signup_user_name_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
-            android:hint="Enter user name"
-            android:inputType="textPersonName"
-            android:textSize="25sp" />
+            app:boxBackgroundMode="outline"
+            android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-        <EditText
-            android:id="@+id/signup_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:hint="Enter email"
-            android:inputType="textPersonName"
-            android:textSize="25sp" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/signup_user_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter user name"
+                android:inputType="textCapSentences"
+                android:textSize="25sp" />
 
-        <EditText
-            android:id="@+id/signup_password"
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/signup_email_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
-            android:hint="Enter password"
-            android:inputType="textPersonName"
-            android:textSize="25sp" />
+            app:boxBackgroundMode="outline"
+            android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/signup_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter email"
+                android:inputType="textWebEmailAddress"
+                android:textSize="25sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/signup_password_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            app:boxBackgroundMode="outline"
+            android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:endIconMode="password_toggle"
+            app:counterEnabled="true"
+            app:counterMaxLength="15"
+            app:errorEnabled="true"
+
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/signup_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:hint="Enter password"
+                android:inputType="textWebPassword"
+                android:textSize="25sp"
+
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
 
         <Button
             android:id="@+id/signUp_btn"
@@ -63,7 +103,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
-            android:text="Sign Up" />
+            android:text="Sign Up"
+            android:textColor="#fff"
+
+            android:background="@drawable/login_btn_round_bg"/>
 
     </LinearLayout>
 
