@@ -29,6 +29,7 @@
         android:text="User Name"
         android:textSize="25sp"
         android:textStyle="bold"
+        android:textColor="#000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profile_image" />
@@ -40,8 +41,11 @@
 
         android:layout_marginTop="8dp"
         android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        app:layout_goneMarginEnd="10dp"
         android:text="Hi i am a new user here."
         android:textSize="18sp"
+        android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userNameText" />
@@ -52,10 +56,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="116dp"
         android:text="Add image"
+        android:textColor="#fff"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.485"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userStatus" />
+        app:layout_constraintTop_toBottomOf="@+id/userStatus"
+        android:background="@drawable/round_btn_color_primary"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"/>
 
     <Button
         android:id="@+id/confirmChanges"
@@ -63,11 +70,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:text="Confirm Changes"
+        android:textColor="#fff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/changeStatus"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        android:background="@drawable/round_btn_red"/>
 
     <Button
         android:id="@+id/changeStatus"
@@ -75,7 +84,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Add Status"
+        android:textColor="#fff"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/changeImageBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/changeImageBtn"
+        android:background="@drawable/round_btn_color_primary"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
