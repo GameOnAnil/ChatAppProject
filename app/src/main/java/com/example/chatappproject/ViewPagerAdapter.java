@@ -15,17 +15,18 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position){
             case 0:
-               ChatFragment chatFragment = new ChatFragment();
-               return  chatFragment;
-            case 1:
                 FriendsFragment friendsFragment = new FriendsFragment();
                 return  friendsFragment;
+            case 1:
+                RequestFragment requestFragment = new RequestFragment();
+                return  requestFragment;
             case 2:
                 AllUserFragment allUserFragment = new AllUserFragment();
                 return  allUserFragment;
             case 3:
-                RequestFragment requestFragment = new RequestFragment();
-                return  requestFragment;
+                ChatFragment chatFragment = new ChatFragment();
+                return  chatFragment;
+
             default:
                 return null;
         }
@@ -40,13 +41,13 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position){
         switch (position){
             case 0:
-                return "Chat";
-            case 1:
                 return "Friends";
+            case 1:
+                return "Requests";
             case 2:
                 return "Users";
             case 3:
-                return "Requests";
+                return "Chat";
             default:
                 return null;
         }
