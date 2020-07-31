@@ -45,6 +45,7 @@ public class UserProfile extends AppCompatActivity {
     DatabaseReference mPressedUserRef;
     DatabaseReference mDatabaseReference;
     DatabaseReference mFriendsDatabase;
+    DatabaseReference mMessageDatabase;
     FirebaseUser mCurrentUser;
 
     String mUser_state;
@@ -74,6 +75,7 @@ public class UserProfile extends AppCompatActivity {
         db = FirebaseDatabase.getInstance();
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
         mFriendsDatabase = FirebaseDatabase.getInstance().getReference().child("Friend");
+        mMessageDatabase = FirebaseDatabase.getInstance().getReference().child("Messages");
 
         String currentUid = mCurrentUser.getUid();
         Log.d(TAG, "onCreate: clickedUserId" + clickedUserId);
@@ -196,9 +198,25 @@ public class UserProfile extends AppCompatActivity {
                                         @Override
                                         public void onSuccess(Void aVoid) {
 
-                                            mFriendRequest.setEnabled(true);
-                                            mFriendRequest.setText("Send Friend Request");
-                                            mUser_state = "not_friends";
+                                            //to delete all the messages
+                                            mMessageDatabase.child(mCurrentUser.getUid()).child(clickedUserId).removeValue()
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            mMessageDatabase.child(clickedUserId).child(mCurrentUser.getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+                                                                    mFriendRequest.setEnabled(true);
+                                                                    mFriendRequest.setText("Send Friend Request");
+                                                                    mUser_state = "not_friends";
+                                                                }
+                                                            });
+                                                        }
+                                                    });
+
+
+
+
                                         }
                                     });
                                 }
