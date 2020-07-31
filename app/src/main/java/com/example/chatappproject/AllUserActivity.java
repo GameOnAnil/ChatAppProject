@@ -112,7 +112,7 @@ public class AllUserActivity extends AppCompatActivity implements AllUserAdapter
             intent.putExtra("userId",userId);
             startActivity(intent);
         }else{
-            Toast.makeText(this, "You are trying to send friend request to yourself idiot!!", Toast.LENGTH_SHORT).show();
+
         }
 
 
