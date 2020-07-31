@@ -43,6 +43,7 @@ public class RequestFragment extends Fragment implements RequestRecyclerAdapter.
                 .getReference()
                 .child("Friend Request")
                 .child(mCurrentUser.getUid())
+                .child("received_req")
                 .limitToLast(50);
 
         FirebaseRecyclerOptions<RequestModel> options =

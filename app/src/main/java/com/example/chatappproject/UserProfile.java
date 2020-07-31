@@ -89,11 +89,11 @@ public class UserProfile extends AppCompatActivity {
 
                 //-------WHEN THEY  ARE NOT FRIENDS-------
                 if (mUser_state == "not_friends") {
-                    mDatabaseReference = db.getReference().child("Friend Request").child(mCurrentUser.getUid()).child(clickedUserId).child("request_type");
+                    mDatabaseReference = db.getReference().child("Friend Request").child(mCurrentUser.getUid()).child("sent_req").child(clickedUserId).child("request_type");
                     mDatabaseReference.setValue("sent").addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            mDatabaseReference = db.getReference().child("Friend Request").child(clickedUserId).child(mCurrentUser.getUid()).child("request_type");
+                            mDatabaseReference = db.getReference().child("Friend Request").child(clickedUserId).child("received_req").child(mCurrentUser.getUid()).child("request_type");
                             mDatabaseReference.setValue("received").addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
@@ -116,12 +116,12 @@ public class UserProfile extends AppCompatActivity {
                 }
 //----------AFTER REQUEST IS SENT ;FOR THE SENDER USER--------
                 if (mUser_state == "req_sent") {
-                    mDatabaseReference = db.getReference().child("Friend Request").child(mCurrentUser.getUid()).child(clickedUserId);
+                    mDatabaseReference = db.getReference().child("Friend Request").child(mCurrentUser.getUid()).child("sent_req").child(clickedUserId);
                     mDatabaseReference.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
 
-                            mDatabaseReference = db.getReference().child("Friend Request").child(clickedUserId).child(mCurrentUser.getUid());
+                            mDatabaseReference = db.getReference().child("Friend Request").child(clickedUserId).child("received_req").child(mCurrentUser.getUid());
                             mDatabaseReference.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
@@ -144,8 +144,8 @@ public class UserProfile extends AppCompatActivity {
                 if (mUser_state == "req_received") {
                     final String currentDate = DateFormat.getDateTimeInstance().format(new Date());
 
-                    final Map<String,Object> map = new HashMap<>();
-                    map.put("date",currentDate);
+                    final Map<String, Object> map = new HashMap<>();
+                    map.put("date", currentDate);
 
                     mFriendsDatabase.child(mCurrentUser.getUid()).child(clickedUserId)
                             .setValue(map).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -156,11 +156,11 @@ public class UserProfile extends AppCompatActivity {
                                         @Override
                                         public void onSuccess(Void aVoid) {
 
-                                            mDatabaseReference = db.getReference().child("Friend Request").child(mCurrentUser.getUid()).child(clickedUserId);
+                                            mDatabaseReference = db.getReference().child("Friend Request").child(mCurrentUser.getUid()).child("received_req").child(clickedUserId);
                                             mDatabaseReference.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
-                                                    mDatabaseReference = db.getReference().child("Friend Request").child(clickedUserId).child(mCurrentUser.getUid());
+                                                    mDatabaseReference = db.getReference().child("Friend Request").child(clickedUserId).child("sent_req").child(mCurrentUser.getUid());
                                                     mDatabaseReference.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                         @Override
                                                         public void onSuccess(Void aVoid) {
@@ -187,22 +187,22 @@ public class UserProfile extends AppCompatActivity {
                 }
 
                 //-----------FOR ALREADY A FRIEND----------
-                if(mUser_state.equals("friends")){
+                if (mUser_state.equals("friends")) {
                     mFriendsDatabase.child(mCurrentUser.getUid()).child(clickedUserId).removeValue()
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            mFriendsDatabase.child(clickedUserId).child(mCurrentUser.getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
+                                    mFriendsDatabase.child(clickedUserId).child(mCurrentUser.getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
 
-                                    mFriendRequest.setEnabled(true);
-                                    mFriendRequest.setText("Send Friend Request");
-                                    mUser_state = "not_friends";
+                                            mFriendRequest.setEnabled(true);
+                                            mFriendRequest.setText("Send Friend Request");
+                                            mUser_state = "not_friends";
+                                        }
+                                    });
                                 }
                             });
-                        }
-                    });
 
                 }
 
@@ -213,11 +213,11 @@ public class UserProfile extends AppCompatActivity {
         mDeclineFriendRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mDatabaseReference = db.getReference().child("Friend Request").child(mCurrentUser.getUid()).child(clickedUserId);
+                mDatabaseReference = db.getReference().child("Friend Request").child(mCurrentUser.getUid()).child("received_req").child(clickedUserId);
                 mDatabaseReference.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        mDatabaseReference = db.getReference().child("Friend Request").child(clickedUserId).child(mCurrentUser.getUid());
+                        mDatabaseReference = db.getReference().child("Friend Request").child(clickedUserId).child("sent_req").child(mCurrentUser.getUid());
                         mDatabaseReference.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
@@ -272,7 +272,7 @@ public class UserProfile extends AppCompatActivity {
                         Picasso.get().load(imageUri).into(mImageView);
                     }
 
-                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Friend Request").child(mCurrentUser.getUid());
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Friend Request").child(mCurrentUser.getUid()).child("received_req");
                     databaseReference.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -285,8 +285,27 @@ public class UserProfile extends AppCompatActivity {
                                     mDeclineFriendRequest.setVisibility(View.VISIBLE);
                                     mUser_state = "req_received";
                                     mFriendRequest.setText("Accept Friend Request");
+                                }
 
-                                } else if (req_type.equals("sent")) {
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
+                    DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference().child("Friend Request").child(mCurrentUser.getUid()).child("sent_req");
+                    databaseReference2.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.hasChild(clickedUserId)) {
+                                Log.d(TAG, "onDataChange: has child");
+                                String req_type = snapshot.child(clickedUserId).child("request_type").getValue().toString();
+                                Log.d(TAG, "onDataChange: req_type is " + req_type);
+
+                                if (req_type.equals("sent")) {
                                     mFriendRequest.setEnabled(true);
                                     mUser_state = "req_sent";
                                     mFriendRequest.setText("Cancel Friend Request");
@@ -302,8 +321,9 @@ public class UserProfile extends AppCompatActivity {
                         }
                     });
 
-                    DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference().child("Friend").child(mCurrentUser.getUid());
-                    databaseReference2.addValueEventListener(new ValueEventListener() {
+
+                    DatabaseReference databaseReference3 = FirebaseDatabase.getInstance().getReference().child("Friend").child(mCurrentUser.getUid());
+                    databaseReference3.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if (snapshot.hasChild(clickedUserId)) {
@@ -321,7 +341,6 @@ public class UserProfile extends AppCompatActivity {
 
                         }
                     });
-
 
 
                 }
